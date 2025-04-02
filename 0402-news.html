@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript核心语法学习</title>
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #9370db;
+            --accent-color: #42a5f5;
+            --bg-color: #f8f9ff;
+            --text-color: #444;
+            --section-bg: #fff;
+            --border-color: #e6e1f9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+            padding-left: 250px; /* 为侧边导航栏留出空间 */
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 侧边导航栏样式 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            padding: 20px 0;
+            z-index: 1000;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 5px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255,255,255,0.2);
+            border-left: 3px solid white;
+        }
+        
+        .nav-links .emoji-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* 页面标题 */
+        .page-header {
+            text-align: center;
+            margin: 20px 0 30px 0;
+        }
+        
+        .page-header h1 {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(147, 112, 219, 0.4);
+            border: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        /* 内容区域 */
+        .content {
+            margin-top: 30px;
+        }
+        
+        /* 代码部分样式 */
+        .code-section {
+            background-color: var(--section-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(147, 112, 219, 0.15);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .code-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(147, 112, 219, 0.25);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .section-title h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .emoji-icon {
+            font-size: 1.5rem;
+        }
+        
+        .note {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffb74d;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+        
+        .result {
+            background-color: #f0f0f0;
+            border-left: 4px solid var(--secondary-color);
+            padding: 10px;
+            margin-top: 10px;
+            font-family: Consolas, monospace;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--secondary-color), #8a2be2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 5px 0;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(147, 112, 219, 0.3);
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #8a2be2, var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(147, 112, 219, 0.4);
+        }
+        
+        /* 饥饿值模拟器样式 */
+        .hunger-simulator {
+            background-color: #e8f5e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 1px dashed #81c784;
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.2);
+        }
+        
+        .hunger-bar {
+            height: 30px;
+            background-color: #e5e5e5;
+            border-radius: 15px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .hunger-level {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .hunger-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-weight: bold;
+            text-shadow: 0 0 2px white;
+        }
+        
+        .food-items {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .food-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            background-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            width: 90px;
+        }
+        
+        .food-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .food-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .food-name {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .food-value {
+            font-size: 0.8rem;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .status-message {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .eating-log {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        /* Trae使用时间统计样式 */
+        .trae-usage {
+            background-color: #e3f2fd;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 1px dashed #64b5f6;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(100, 181, 246, 0.2);
+        }
+        
+        .trae-usage h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .usage-chart {
+            margin: 15px auto;
+            max-width: 500px;
+        }
+        
+        /* 代码块样式 */
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* 页脚样式 */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-top: 60px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                top: 0;
+                padding: 10px 0;
+            }
+            
+            .logo {
+                padding: 0 20px 10px 20px;
+                margin-bottom: 10px;
+            }
+            
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+            
+            .nav-links li {
+                margin-bottom: 0;
+                white-space: nowrap;
+            }
+            
+            .nav-links a {
+                padding: 8px 15px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            
+            .nav-links a:hover, .nav-links a.active {
+                border-left: none;
+                border-bottom: 3px solid white;
+            }
+            
+            .food-items {
+                gap: 10px;
+            }
+            
+            .food-item {
+                width: 70px;
+                padding: 10px;
+            }
+            
+            .food-emoji {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边导航栏 -->
+    <nav class="sidebar">
+        <div class="logo">
+            <span>✨</span>
+            <span>JavaScript学习笔记</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#loops" class="active"><span class="emoji-icon">🔄</span>循环体与饥饿值模拟</a></li>
+            <li><a href="#trae"><span class="emoji-icon">📊</span>Trae使用统计</a></li>
+            <li><a href="#variables"><span class="emoji-icon">📝</span>变量声明</a></li>
+            <li><a href="#primitives"><span class="emoji-icon">🧩</span>基本类型</a></li>
+            <li><a href="#reference"><span class="emoji-icon">🧰</span>引用类型</a></li>
+            <li><a href="#conversion"><span class="emoji-icon">🔄</span>类型转换</a></li>
+            <li><a href="#scope"><span class="emoji-icon">🔍</span>变量作用域</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><span class="cute-icon">✨</span> JavaScript 学习笔记 <span class="cute-icon">🌈</span></h1>
+        </div>
+        
+        <p>本页面演示了JavaScript中的循环体和各种数据类型。点击按钮查看结果，或打开浏览器控制台(F12)查看更多信息。</p>
+        
+        <div class="content">
+            <!-- 1. 循环体与饥饿值模拟 (调整到第一位) -->
+            <div id="loops" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">🍽️</span> 1. 循环体与饥饿值模拟</h2>
+                </div>
+                <div class="note">
+                    JavaScript中的循环结构可以重复执行代码块，包括for循环、while循环和do-while循环。这里我们用循环来模拟饥饿值和进食过程。
+                </div>
+                
+                <div class="hunger-simulator">
+                    <h3>饥饿值模拟器</h3>
+                    <p>当前饥饿值：</p>
+                    <div class="hunger-bar">
+                        <div id="hungerLevel" class="hunger-level"></div>
+                        <div id="hungerValue" class="hunger-value">0%</div>
+                    </div>
+                    
+                    <p>选择食物进行进食：</p>
+                    <div class="food-items">
+                        <div class="food-item" onclick="eatFood('米饭', 15)">
+                            <div class="food-emoji">🍚</div>
+                            <div class="food-name">米饭</div>
+                            <div class="food-value">-15饥饿</div>
+                        </div>
+                        <div class="food-item" onclick="eatFood('面条', 20)">
+                            <div class="food-emoji">🍜</div>
+                            <div class="food-name">面条</div>
+                            <div class="food-value">-20饥饿</div>
+                        </div>
+                        <div class="food-item" onclick="eatFood('汉堡', 30)">
+                            <div class="food-emoji">🍔</div>
+                            <div class="food-name">汉堡</div>
+                            <div class="food-value">-30饥饿</div>
+                        </div>
+                        <div class="food-item" onclick="eatFood('披萨', 35)">
+                            <div class="food-emoji">🍕</div>
+                            <div class="food-name">披萨</div>
+                            <div class="food-value">-35饥饿</div>
+                        </div>
+                        <div class="food-item" onclick="eatFood('水果', 10)">
+                            <div class="food-emoji">🍎</div>
+                            <div class="food-name">水果</div>
+                            <div class="food-value">-10饥饿</div>
+                        </div>
+                        <div class="food-item" onclick="eatFood('蛋糕', 25)">
+                            <div class="food-emoji">🍰</div>
+                            <div class="food-name">蛋糕</div>
+                            <div class="food-value">-25饥饿</div>
+                        </div>
+                    </div>
+                    
+                    <div id="statusMessage" class="status-message">你现在不饿，饥饿值为0%</div>
+                    
+                    <h4>进食日志：</h4>
+                    <div id="eatingLog" class="eating-log"></div>
+                    
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button onclick="startHungerSimulation()">开始饥饿模拟 ▶️</button>
+                        <button onclick="stopHungerSimulation()">暂停饥饿模拟 ⏸️</button>
+                        <button onclick="resetHunger()">重置饥饿值 🔄</button>
+                    </div>
+                    
+                    <div class="note" style="margin-top: 15px;">
+                        <strong>循环体说明：</strong> 本模拟器使用了<code>setInterval()</code>创建一个循环，每隔一段时间增加饥饿值。当你进食时，会使用<code>for</code>循环来模拟咀嚼过程，并相应减少饥饿值。
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3>循环体代码示例：</h3>
+                    <div class="code-block">
+                        // 使用for循环模拟咀嚼过程<br>
+                        for (let i = 0; i < bites; i++) {<br>
+                        &nbsp;&nbsp;// 这里我们使用闭包和setTimeout来模拟每一口的延迟<br>
+                        &nbsp;&nbsp;(function(bite) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;setTimeout(() => {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const biteValue = Math.min(5, value - bite * 5);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hunger = Math.max(0, hunger - biteValue);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 更新显示<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}, 500 * bite); // 每一口间隔0.5秒<br>
+                        &nbsp;&nbsp;})(i);<br>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Trae使用时间统计 (调整到第二位) -->
+            <div id="trae" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">📊</span> 2. Trae使用时间统计</h2>
+                </div>
+                <div class="note">
+                    这个部分使用了多种循环方式来统计和分析上周使用Trae的时间数据，展示了for...in、forEach和while循环的实际应用。
+                </div>
+                
+                <div class="trae-usage">
+                    <h3>上周Trae使用时间统计</h3>
+                    <p>点击下方按钮查看上周使用Trae的详细时间统计：</p>
+                    <button onclick="lastWeekTrae()">查看使用时间统计 📈</button>
+                    <div id="trae-result" class="result" style="display: none;"></div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3>循环体代码示例：</h3>
+                    <div class="code-block">
+                        // 使用for...in循环遍历对象<br>
+                        for (let day in dailyUsage) {<br>
+                        &nbsp;&nbsp;totalTime += dailyUsage[day];<br>
+                        &nbsp;&nbsp;result += `&lt;li>${day}: ${dailyUsage[day]} 小时&lt;/li>`;<br>
+                        }<br><br>
+                        
+                        // 使用forEach循环遍历数组<br>
+                        days.forEach(day => {<br>
+                        &nbsp;&nbsp;averageTime += dailyUsage[day] / days.length;<br>
+                        });<br><br>
+                        
+                        // 使用while循环查找最大值<br>
+                        let i = 1;<br>
+                        while (i < days.length) {<br>
+                        &nbsp;&nbsp;if (dailyUsage[days[i]] > maxTime) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;maxDay = days[i];<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;maxTime = dailyUsage[maxDay];<br>
+                        &nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;i++;<br>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. 变量声明 -->
+            <div id="variables" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">📝</span> 3. 变量声明</h2>
+                </div>
+                <div class="note">
+                    JavaScript中有三种声明变量的方式：var（旧）、let（推荐）和const（常量）
+                </div>
+                <button onclick="showVariableDeclaration()">运行变量声明示例</button>
+                <div id="variable-result" class="result"></div>
+            </div>
+            
+            <!-- 4. 基本数据类型 -->
+            <div id="primitives" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">🧩</span> 4. 基本数据类型</h2>
+                </div>
+                <div class="note">
+                    JavaScript的基本数据类型包括：Number（数字）、String（字符串）、Boolean（布尔值）、Undefined（未定义）、Null（空）和Symbol（符号，ES6新增）
+                </div>
+                <button onclick="showPrimitiveTypes()">运行基本数据类型示例</button>
+                <div id="primitive-result" class="result"></div>
+            </div>
+            
+            <!-- 5. 引用数据类型 -->
+            <div id="reference" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">🧰</span> 5. 引用数据类型</h2>
+                </div>
+                <div class="note">
+                    JavaScript的引用数据类型包括：Object（对象）、Array（数组）、Function（函数）、Date（日期）等
+                </div>
+                <button onclick="showReferenceTypes()">运行引用数据类型示例</button>
+                <div id="reference-result" class="result"></div>
+            </div>
+            
+            <!-- 6. 类型转换 -->
+            <div id="conversion" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">🔄</span> 6. 类型转换</h2>
+                </div>
+                <div class="note">
+                    JavaScript中的类型可以显式转换（手动转换）或隐式转换（自动转换）
+                </div>
+                <button onclick="showTypeConversion()">运行类型转换示例</button>
+                <div id="conversion-result" class="result"></div>
+            </div>
+            
+            <!-- 7. 变量作用域 -->
+            <div id="scope" class="code-section">
+                <div class="section-title">
+                    <h2><span class="emoji-icon">🔍</span> 7. 变量作用域</h2>
+                </div>
+                <div class="note">
+                    var是函数作用域，let和const是块级作用域
+                </div>
+                <button onclick="showVariableScope()">运行变量作用域示例</button>
+                <div id="scope-result" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>JavaScript学习笔记 &copy; 2023</p>
+            <p>通过实际示例学习JavaScript核心概念</p>
+        </footer>
+    </div>
+    
+    <!-- 返回顶部按钮 -->
+    <div id="backToTop" class="back-to-top">↑</div>
+
+    <script>
+        // 辅助函数：将结果显示到页面上
+        function displayResult(elementId, content) {
+            document.getElementById(elementId).innerHTML = content;
+            console.log(content);
+        }
+        
+        // 新增：上周Trae使用时间统计函数
+        function lastWeekTrae() {
+            // 模拟上周每天使用Trae的时间（小时）
+            const dailyUsage = {
+                '周一': 2.5,
+                '周二': 1.8,
+                '周三': 3.2,
+                '周四': 2.0,
+                '周五': 4.5,
+                '周六': 5.3,
+                '周日': 3.7
+            };
+            
+            let totalTime = 0;
+            let result = "<h4>上周Trae使用时间统计</h4><ul>";
+            
+            // 使用for...in循环遍历对象
+            for (let day in dailyUsage) {
+                totalTime += dailyUsage[day];
+                result += `<li>${day}: ${dailyUsage[day]} 小时</li>`;
+            }
+            
+            result += `</ul><p><strong>总计使用时间: ${totalTime.toFixed(1)} 小时</strong></p>`;
+            
+            // 使用另一种循环方式 - forEach遍历对象的键值对
+            let averageTime = 0;
+            const days = Object.keys(dailyUsage);
+            days.forEach(day => {
+                averageTime += dailyUsage[day] / days.length;
+            });
+            
+            result += `<p>平均每天使用时间: ${averageTime.toFixed(2)} 小时</p>`;
+            
+            // 使用while循环找出使用时间最长的一天
+            let maxDay = days[0];
+            let maxTime = dailyUsage[maxDay];
+            let i = 1;
+            while (i < days.length) {
+                if (dailyUsage[days[i]] > maxTime) {
+                    maxDay = days[i];
+                    maxTime = dailyUsage[maxDay];
+                }
+                i++;
+            }
+            
+            result += `<p>使用时间最长的一天: ${maxDay} (${maxTime} 小时)</p>`;
+            
+            // 在专门的结果区域显示
+            const traeResult = document.getElementById('trae-result');
+            traeResult.innerHTML = result;
+            traeResult.style.display = 'block';
+            
+            // 添加可视化图表
+            const chartContainer = document.createElement('div');
+            chartContainer.style.marginTop = '15px';
+            chartContainer.innerHTML = `
+                <h4>使用时间可视化</h4>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    ${Object.entries(dailyUsage).map(([day, hours]) => `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 50px; text-align: right;">${day}:</div>
+                            <div style="flex-grow: 1; background-color: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="background-color: #42a5f5; height: 100%; width: ${hours/6*100}%;"></div>
+                            </div>
+                            <div style="width: 50px;">${hours}小时</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            traeResult.appendChild(chartContainer);
+            
+            // 也可以添加到日志中
+            addLogEntry(`上周总共使用Trae ${totalTime.toFixed(1)} 小时，平均每天 ${averageTime.toFixed(2)} 小时`);
+            
+            return totalTime;
+        }
+        
+        // 饥饿值模拟相关代码
+        let hunger = 0; // 初始饥饿值为0
+        let hungerInterval; // 用于存储饥饿增长的定时器
+        let isSimulationRunning = false;
+        
+        // 更新饥饿值显示
+        function updateHungerDisplay() {
+            const hungerLevel = document.getElementById('hungerLevel');
+            const hungerValue = document.getElementById('hungerValue');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            hungerLevel.style.width = `${hunger}%`;
+            hungerValue.textContent = `${hunger}%`;
+            
+            if (hunger < 20) {
+                statusMessage.textContent = `你现在不饿，饥饿值为${hunger}%`;
+            } else if (hunger < 50) {
+                statusMessage.textContent = `你有点饿了，饥饿值为${hunger}%`;
+            } else if (hunger < 80) {
+                statusMessage.textContent = `你已经很饿了，饥饿值为${hunger}%`;
+            } else {
+                statusMessage.textContent = `你非常饿，快吃点东西吧！饥饿值为${hunger}%`;
+            }
+        }
+        
+        // 开始饥饿模拟
+        function startHungerSimulation() {
+            if (isSimulationRunning) return;
+            
+            isSimulationRunning = true;
+            // 使用setInterval创建循环，每3秒增加饥饿值
+            hungerInterval = setInterval(() => {
+                // 使用if条件确保饥饿值不超过100
+                if (hunger < 100) {
+                    hunger += 5;
+                    updateHungerDisplay();
+                    
+                    // 记录日志
+                    const now = new Date();
+                    const timeString = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+                    
+                    if (hunger >= 100) {
+                        addLogEntry(`${timeString} - 饥饿值达到100%！`);
+                    } else {
+                        addLogEntry(`${timeString} - 饥饿值增加到${hunger}%`);
+                    }
+                }
+            }, 3000);
+        }
+        
+        // 停止饥饿模拟
+        function stopHungerSimulation() {
+            if (!isSimulationRunning) return;
+            
+            clearInterval(hungerInterval);
+            isSimulationRunning = false;
+            addLogEntry('饥饿模拟已暂停');
+        }
+        
+        // 重置饥饿值
+        function resetHunger() {
+            hunger = 0;
+            updateHungerDisplay();
+            addLogEntry('饥饿值已重置为0%');
+        }
+        
+        // 进食函数
+        function eatFood(foodName, value) {
+            if (hunger <= 0) {
+                addLogEntry(`你现在不饿，不需要吃${foodName}`);
+                return;
+            }
+            
+            // 计算实际可以减少的饥饿值
+            const actualValue = Math.min(value, hunger);
+            
+            // 使用for循环模拟咀嚼过程
+            const bites = Math.ceil(actualValue / 5); // 每口减少5点饥饿值
+            
+            for (let i = 0; i < bites; i++) {
+                // 使用闭包保存当前的咀嚼次数
+                (function(bite) {
+                    setTimeout(() => {
+                        const biteValue = Math.min(5, actualValue - bite * 5);
+                        hunger = Math.max(0, hunger - biteValue);
+                        updateHungerDisplay();
+                    }, 500 * bite); // 每一口间隔0.5秒
+                })(i);
+            }
+            
+            addLogEntry(`吃了${foodName}，减少${actualValue}点饥饿值`);
+        }
+        
+        // 添加日志条目
+        function addLogEntry(message) {
+            const logContainer = document.getElementById('eatingLog');
+            const now = new Date();
+            const timeString = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `${timeString} - ${message}`;
+            
+            logContainer.insertBefore(entry, logContainer.firstChild);
+            
+            // 保持日志条目在合理范围内
+            while (logContainer.children.length > 10) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+        
+        // 1. 变量声明示例
+        function showVariableDeclaration() {
+            let result = "";
+            
+            // var声明
+            result += "使用var声明变量：<br>";
+            var varVariable = "我是用var声明的变量";
+            result += "varVariable: " + varVariable + "<br>";
+            
+            // let声明
+            result += "<br>使用let声明变量：<br>";
+            let letVariable = "我是用let声明的变量";
+            result += "letVariable: " + letVariable + "<br>";
+            
+            // const声明
+            result += "<br>使用const声明常量：<br>";
+            const constVariable = "我是用const声明的常量";
+            result += "constVariable: " + constVariable + "<br>";
+            
+            // 尝试修改const变量
+            try {
+                constVariable = "尝试修改常量";
+            } catch(e) {
+                result += "尝试修改常量时出错: " + e.message + "<br>";
+            }
+            
+            // 变量提升
+            result += "<br>变量提升示例：<br>";
+            result += "提升前访问: " + (typeof hoistedVar !== 'undefined' ? hoistedVar : "未定义") + "<br>";
+            var hoistedVar = "我被提升了";
+            result += "提升后访问: " + hoistedVar + "<br>";
+            
+            displayResult("variable-result", result);
+        }
+        
+        // 2. 基本数据类型示例
+        function showPrimitiveTypes() {
+            let result = "";
+            
+            // Number类型
+            result += "Number类型：<br>";
+            const intNumber = 42;
+            const floatNumber = 3.14;
+            const negativeNumber = -10;
+            const expNumber = 2.5e5; // 250000
+            
+            result += "整数: " + intNumber + "<br>";
+            result += "浮点数: " + floatNumber + "<br>";
+            result += "负数: " + negativeNumber + "<br>";
+            result += "科学计数法: " + expNumber + "<br>";
+            result += "特殊数值: Infinity, -Infinity, NaN<br>";
+            
+            // String类型
+            result += "<br>String类型：<br>";
+            const singleQuote = 'Hello';
+            const doubleQuote = "World";
+            const templateString = `${singleQuote}, ${doubleQuote}!`;
+            
+            result += "单引号: " + singleQuote + "<br>";
+            result += "双引号: " + doubleQuote + "<br>";
+            result += "模板字符串: " + templateString + "<br>";
+            
+            // Boolean类型
+            result += "<br>Boolean类型：<br>";
+            const trueValue = true;
+            const falseValue = false;
+            
+            result += "true: " + trueValue + "<br>";
+            result += "false: " + falseValue + "<br>";
+            
+            // Undefined类型
+            result += "<br>Undefined类型：<br>";
+            let undefinedValue;
+            
+            result += "未赋值的变量: " + undefinedValue + "<br>";
+            result += "typeof undefinedValue: " + typeof undefinedValue + "<br>";
+            
+            // Null类型
+            result += "<br>Null类型：<br>";
+            const nullValue = null;
+            
+            result += "null值: " + nullValue + "<br>";
+            result += "typeof nullValue: " + typeof nullValue + " (这是JavaScript的一个历史遗留bug)<br>";
+            
+            // Symbol类型 (ES6新增)
+            result += "<br>Symbol类型 (ES6新增)：<br>";
+            const symbol1 = Symbol("描述");
+            const symbol2 = Symbol("描述"); // 即使描述相同，每个Symbol也是唯一的
+            
+            result += "symbol1: " + symbol1.toString() + "<br>";
+            result += "symbol2: " + symbol2.toString() + "<br>";
+            result += "symbol1 === symbol2: " + (symbol1 === symbol2) + "<br>";
+            
+            displayResult("primitive-result", result);
+        }
+        
+        // 3. 引用数据类型示例
+        function showReferenceTypes() {
+            let result = "";
+            
+            // Object类型
+            result += "Object类型：<br>";
+            const person = {
+                name: "张三",
+                age: 25,
+                greet: function() {
+                    return "你好，我是" + this.name;
+                }
+            };
+            
+            result += "person.name: " + person.name + "<br>";
+            result += "person['age']: " + person['age'] + "<br>";
+            result += "person.greet(): " + person.greet() + "<br>";
+            
+            // Array类型
+            result += "<br>Array类型：<br>";
+            const fruits = ["苹果", "香蕉", "橙子"];
+            
+            result += "fruits: " + fruits + "<br>";
+            result += "fruits[1]: " + fruits[1] + "<br>";
+            result += "fruits.length: " + fruits.length + "<br>";
+            
+            // Function类型
+            result += "<br>Function类型：<br>";
+            function multiply(a, b) {
+                return a * b;
+            }
+            
+            result += "multiply(3, 4): " + multiply(3, 4) + "<br>";
+            
+            // 函数表达式
+            const add = function(a, b) {
+                return a + b;
+            };
+            
+            result += "add(5, 7): " + add(5, 7) + "<br>";
+            
+            // 箭头函数 (ES6)
+            const subtract = (a, b) => a - b;
+            
+            result += "subtract(10, 3): " + subtract(10, 3) + "<br>";
+            
+            // Date类型
+            result += "<br>Date类型：<br>";
+            const now = new Date();
+            
+            result += "当前时间: " + now.toString() + "<br>";
+            result += "年份: " + now.getFullYear() + "<br>";
+            result += "月份: " + (now.getMonth() + 1) + " (月份从0开始)<br>";
+            
+            // RegExp类型
+            result += "<br>RegExp类型：<br>";
+            const pattern = /\d+/g;
+            const text = "我有12个苹果和34个橙子";
+            
+            result += "原文本: " + text + "<br>";
+            result += "匹配结果: " + text.match(pattern) + "<br>";
+            
+            displayResult("reference-result", result);
+        }
+        
+        // 4. 类型转换示例
+        function showTypeConversion() {
+            let result = "";
+            
+            // 显式转换（手动转换）
+            result += "显式转换（手动转换）：<br>";
+            
+            // 转为字符串
+            result += "String(123): " + String(123) + "<br>";
+            result += "(123).toString(): " + (123).toString() + "<br>";
+            
+            // 转为数字
+            result += "Number('123'): " + Number('123') + "<br>";
+            result += "parseInt('123.45'): " + parseInt('123.45') + "<br>";
+            result += "parseFloat('123.45'): " + parseFloat('123.45') + "<br>";
+            
+            // 转为布尔值
+            result += "Boolean(1): " + Boolean(1) + "<br>";
+            result += "Boolean(0): " + Boolean(0) + "<br>";
+            result += "Boolean('hello'): " + Boolean('hello') + "<br>";
+            result += "Boolean(''): " + Boolean('') + "<br>";
+            
+            // 隐式转换（自动转换）
+            result += "<br>隐式转换（自动转换）：<br>";
+            
+            // 字符串与数字
+            result += "'123' + 456: " + ('123' + 456) + " (字符串连接)<br>";
+            result += "'123' - 0: " + ('123' - 0) + " (转为数字)<br>";
+            
+            // 布尔值转换
+            result += "if条件中的转换：<br>";
+            result += "空字符串转为布尔值: " + ('' ? '真' : '假') + "<br>";
+            result += "数字0转为布尔值: " + (0 ? '真' : '假') + "<br>";
+            result += "数字1转为布尔值: " + (1 ? '真' : '假') + "<br>";
+            
+            displayResult("conversion-result", result);
+        }
+        
+        // 5. 变量作用域示例
+        function showVariableScope() {
+            let result = "";
+            
+            // var的函数作用域
+            result += "var的函数作用域：<br>";
+            
+            function varScopeTest() {
+                var functionScoped = "我在函数内部";
+                
+                if (true) {
+                    var blockScoped = "我在块内部，但使用var声明";
+                    result += "在块内部访问blockScoped: " + blockScoped + "<br>";
+                }
+                
+                result += "在函数内、块外部访问blockScoped: " + blockScoped + "<br>";
+                return functionScoped;
+            }
+            
+            result += "函数返回值: " + varScopeTest() + "<br>";
+            
+            try {
+                result += "尝试在函数外访问functionScoped: " + functionScoped + "<br>";
+            } catch(e) {
+                result += "错误：" + e.message + " (无法在函数外访问函数内的变量)<br>";
+            }
+            
+            // let和const的块级作用域
+            result += "<br>let和const的块级作用域：<br>";
+            
+            function letConstScopeTest() {
+                let functionLet = "我在函数内部(let)";
+                
+                if (true) {
+                    let blockLet = "我在块内部(let)";
+                    const blockConst = "我在块内部(const)";
+                    result += "在块内部访问blockLet: " + blockLet + "<br>";
+                    result += "在块内部访问blockConst: " + blockConst + "<br>";
+                }
+                
+                try {
+                    result += "尝试在块外访问blockLet: " + blockLet + "<br>";
+                } catch(e) {
+                    result += "错误：" + e.message + " (无法在块外访问块内的let变量)<br>";
+                }
+                
+                return functionLet;
+            }
+            
+            result += "函数返回值: " + letConstScopeTest() + "<br>";
+            
+            displayResult("scope-result", result);
+        }
+        
+        // 返回顶部功能
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 页面加载完成后初始化显示
+        window.addEventListener('load', () => {
+            updateHungerDisplay();
+            
+            // 监听滚动事件，控制返回顶部按钮的显示
+            window.addEventListener('scroll', () => {
+                const backToTopButton = document.querySelector('.back-to-top');
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
